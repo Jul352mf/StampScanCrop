@@ -98,7 +98,7 @@ def add_border(image, border_size=5):
         borderType=cv2.BORDER_CONSTANT, value=(0, 0, 0)
     )
 
-def process_stamps(image_path, output_dir):
+def process_stamps(image_path):
     print(f"Processing: {image_path}")
     image = load_image(image_path)
     if image is None:
@@ -120,13 +120,11 @@ def process_stamps(image_path, output_dir):
     # Step 4: Add border
     final_image = add_border(refined_image)
 
-    # Ensure output directory exists
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+
 
     # Build and save final path
     base_name = os.path.splitext(os.path.basename(image_path))[0]
-    output_path = os.path.join(output_dir, f"{base_name}_cropped.jpg")
+    output_path = os.path.join(f"{base_name}_cropped.jpg")
     cv2.imwrite(output_path, final_image)
     print(f"Saved cropped image to: {output_path}")
 
@@ -139,8 +137,6 @@ def process_stamps(image_path, output_dir):
 ##########################
 st.title("Stamp Processing App")
 
-# User input: Output directory
-output_dir = st.text_input("Output directory", "./Data/img_output")
 
 # File uploader
 uploaded_file = st.file_uploader("Upload a stamp image", type=["png", "jpg", "jpeg"])
@@ -161,7 +157,7 @@ if uploaded_file is not None:
             f.write(file_bytes)
 
         # Run the full pipeline
-        output_path = process_stamps(temp_input_path, output_dir)
+        output_path = process_stamps(temp_input_path)
 
         if output_path is None:
             st.error("No valid ROI found or image processing failed.")
